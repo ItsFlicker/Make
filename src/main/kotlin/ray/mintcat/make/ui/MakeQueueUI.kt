@@ -1,18 +1,14 @@
 package ray.mintcat.make.ui
 
-import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
-import ray.mintcat.make.*
-import ray.mintcat.make.data.MakeTask
+import ray.mintcat.make.MakeManager
+import ray.mintcat.make.createLoad
 import ray.mintcat.make.data.Time
 import taboolib.common.platform.function.submit
 import taboolib.library.xseries.XMaterial
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
-import taboolib.module.ui.type.Linked
 import taboolib.platform.util.buildItem
-import taboolib.platform.util.modifyLore
-import taboolib.platform.util.modifyMeta
 
 object MakeQueueUI {
 
@@ -26,7 +22,7 @@ object MakeQueueUI {
                 "#########"
             )
             set('#', buildItem(XMaterial.BLACK_STAINED_GLASS_PANE)) {
-                it.isCancelled = true
+                isCancelled = true
                 player.closeInventory()
                 submit(delay = 1) {
                     open(player)
@@ -78,8 +74,8 @@ object MakeQueueUI {
                             lore.add("&c 点击取消任务 ")
                         }
                         colored()
-                    }) { e ->
-                        e.isCancelled = true
+                    }) {
+                        isCancelled = true
                         if (task.state) {
                             data.getFinished(task)
                             player.closeInventory()
@@ -87,7 +83,7 @@ object MakeQueueUI {
                                 open(player)
                             }
                         } else if (task.makeTime == task.getStack()!!.time) {
-                            if (e.clickEvent().isLeftClick) {
+                            if (clickEvent().isLeftClick) {
                                 data.jump(task)
                             } else {
                                 data.back(task)

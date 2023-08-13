@@ -1,24 +1,25 @@
 plugins {
     `java-library`
     `maven-publish`
-    id("io.izzel.taboolib") version "1.40"
-    id("org.jetbrains.kotlin.jvm") version "1.5.10"
-    kotlin("plugin.serialization") version "1.5.10"
+    id("io.izzel.taboolib") version "1.56"
+    kotlin("jvm") version "1.9.0"
+    kotlin("plugin.serialization") version "1.9.0"
 }
 
 taboolib {
     install("common")
     install("common-5")
+    install("module-chat")
     install("module-configuration")
+    install("module-kether")
     install("module-nms")
     install("module-nms-util")
     install("module-ui")
-    install("module-kether")
-    install("module-chat")
     install("expansion-command-helper")
     install("platform-bukkit")
+    relocate("ink.ptms.um","ray.mintcat.make.um")
     classifier = null
-    version = "6.0.9-11"
+    version = "6.0.12-9"
 }
 
 repositories {
@@ -30,6 +31,7 @@ repositories {
 
 dependencies {
     compileOnly("ink.ptms.core:v11200:11200")
+    taboo("ink.ptms:um:1.0.0-beta-30")
     compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
     compileOnly(kotlin("stdlib"))
     compileOnly(fileTree("libs"))

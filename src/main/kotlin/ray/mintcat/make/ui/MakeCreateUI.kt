@@ -1,8 +1,8 @@
 package ray.mintcat.make.ui
 
 import github.saukiya.sxitem.SXItem
-import io.lumine.xikage.mythicmobs.MythicMobs
-import io.lumine.xikage.mythicmobs.items.MythicItem
+import ink.ptms.um.Item
+import ink.ptms.um.Mythic
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -38,7 +38,7 @@ object MakeCreateUI {
                 add("&8Shift+左键 选择源物品")
                 add("&7右键 切换给予")
             }) {
-                if (it.clickEvent().isLeftClick && it.clickEvent().isShiftClick) {
+                if (clickEvent().isLeftClick && clickEvent().isShiftClick) {
                     player.closeInventory()
                     submit(delay = 2) {
                         player.openMenu<Basic>("编辑产物") {
@@ -47,7 +47,7 @@ object MakeCreateUI {
                                 name = " "
                                 colored()
                             }) {
-                                it.isCancelled = true
+                                isCancelled = true
                             }
                             set('A', buildItem(XMaterial.GRASS_BLOCK) {
                                 name = "&f设置来源: &a原版"
@@ -80,7 +80,7 @@ object MakeCreateUI {
                     }
                     return@set
                 }
-                if (it.clickEvent().isLeftClick) {
+                if (clickEvent().isLeftClick) {
                     player.closeInventory()
                     submit(delay = 2) {
                         player.openMenu<Basic>("请放入物品") {
@@ -90,7 +90,7 @@ object MakeCreateUI {
                                 name = " "
                                 colored()
                             }) {
-                                it.isCancelled = true
+                                isCancelled = true
                             }
                             onClick(lock = false)
                             onClose {
@@ -112,15 +112,17 @@ object MakeCreateUI {
             }
 
             set('B', buildItem(XMaterial.NETHER_STAR) {
-                name = "&d继承其他配方"
+                name = "&d继承其他配方(尚未完成)"
                 colored()
-            })
+            }) {
+                isCancelled = true
+            }
             set('C', buildItem(XMaterial.ITEM_FRAME) {
                 name = "&f类型: ${builder.type}"
                 lore.add(" ")
                 lore.add("&7点击修改")
                 colored()
-            }) { e ->
+            }) {
                 player.closeInventory()
                 player.inputSign(arrayOf("", "", "第一行输入类型")) { len ->
                     if (len[0].isNotEmpty()) {
@@ -151,7 +153,7 @@ object MakeCreateUI {
                     lore.add("&7${element.type.display} => ${element.id} X ${element.amount}".color())
                 }
             }) {
-                it.isCancelled = true
+                isCancelled = true
                 player.closeInventory()
                 submit(delay = 1) {
                     materialType(player, builder)
@@ -231,10 +233,10 @@ object MakeCreateUI {
     //true 是add false是take
     class MaterialTask(val type: Boolean, val material: MakeMaterial) {
         fun log(): String {
-            if (type) {
-                return "&a+ 添加 &7${material.type.display} => ${material.id} X ${material.amount}".color()
+            return if (type) {
+                "&a+ 添加 &7${material.type.display} => ${material.id} X ${material.amount}".color()
             } else {
-                return "&c- 删除 &7${material.type.display} => ${material.id} X ${material.amount}".color()
+                "&c- 删除 &7${material.type.display} => ${material.id} X ${material.amount}".color()
             }
         }
     }
@@ -245,7 +247,7 @@ object MakeCreateUI {
         player.openMenu<Linked<MakeMaterial>>("操作配方") {
             inits()
             rows(6)
-            slots(inventoryCenterSlots)
+            slots(Slots.CENTER)
             elements {
                 builder.replace
             }
@@ -332,10 +334,11 @@ object MakeCreateUI {
         player.openMenu<Linked<Material>>("添加材料: MC") {
             rows(6)
             inits()
-            slots(inventoryCenterSlots)
+            slots(Slots.CENTER)
             elements {
                 val list = mutableListOf<Material>()
-                list.addAll(Material.values().toList().filter { it.isItem && it.isNotAir() && it.canUse() })
+                val test = Material.entries
+                list.addAll(Material.entries.filter { it.isNotAir() && it.canUse() })
                 list.sortBy { it.name }
                 list
             }
@@ -389,18 +392,15 @@ object MakeCreateUI {
     }
 
     fun addMM(player: Player, builder: MakeStack, type: Type = Type.REPLACE) {
-        player.openMenu<Linked<MythicItem>>("添加材料: MM") {
+        player.openMenu<Linked<Item>>("添加材料: MM") {
             rows(6)
             inits()
-            slots(inventoryCenterSlots)
+            slots(Slots.CENTER)
             elements {
-                val list = mutableListOf<MythicItem>()
-                list.addAll(MythicMobs.inst().itemManager.items.toList())
-                list.sortBy { it.internalName }
-                list
+                Mythic.API.getItemList()
             }
             onGenerate { player, element, index, slot ->
-                return@onGenerate MythicMobs.inst().itemManager.getItemStack(element.internalName).clone().apply {
+                return@onGenerate element.generateItemStack(1).apply {
                     modifyLore {
                         add("")
                         if (type == Type.ITEM) {
@@ -456,7 +456,7 @@ object MakeCreateUI {
         player.openMenu<Linked<String>>("添加材料: SX") {
             rows(6)
             inits()
-            slots(inventoryCenterSlots)
+            slots(Slots.CENTER)
             elements {
                 val list = mutableListOf<String>()
                 list.addAll(SXItem.getItemManager().itemList.filter {

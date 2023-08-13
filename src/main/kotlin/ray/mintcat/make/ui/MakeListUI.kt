@@ -1,6 +1,5 @@
 package ray.mintcat.make.ui
 
-import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.meta.ItemMeta
 import ray.mintcat.make.MakeManager
@@ -11,15 +10,10 @@ import ray.mintcat.make.error
 import ray.mintcat.make.inits
 import taboolib.common.platform.function.submit
 import taboolib.library.xseries.XMaterial
-import taboolib.module.chat.colored
 import taboolib.module.nms.inputSign
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Linked
-import taboolib.platform.util.buildItem
-import taboolib.platform.util.inventoryCenterSlots
-import taboolib.platform.util.modifyLore
-import taboolib.platform.util.modifyMeta
-import java.util.*
+import taboolib.platform.util.*
 
 object MakeListUI {
 
@@ -28,7 +22,7 @@ object MakeListUI {
         player.openMenu<Linked<String>>("制作") {
             rows(6)
             inits()
-            slots(inventoryCenterSlots)
+            slots(Slots.CENTER)
             if (player.isOp) {
                 set(49, buildItem(XMaterial.ANVIL) {
                     name = "&e创建物品"
@@ -74,7 +68,7 @@ object MakeListUI {
         player.openMenu<Linked<MakeStack>>("${type}类 制作") {
             rows(6)
             inits()
-            slots(inventoryCenterSlots)
+            slots(Slots.CENTER)
             elements {
                 if (player.isOp) {
                     MakeManager.stacks.filter { it.type == type }

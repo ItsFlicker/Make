@@ -26,13 +26,12 @@ object MakeCommand {
 
     @CommandBody
     val create = subCommand {
-        dynamic(commit = "配方名") {
-            execute<Player> { sender, context, argument ->
-                val data = MakeManager.getStack(context.argument(0))
+        dynamic("配方名") {
+            execute<Player> { sender, _, argument ->
+                val data = MakeManager.getStack(argument)
                 MakeCreateUI.open(sender, data)
             }
         }
     }
-
 
 }

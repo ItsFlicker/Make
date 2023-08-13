@@ -16,9 +16,6 @@ import taboolib.platform.util.buildItem
  * @Time 2022/1/26
  * @since 1.0
  */
-
-
-
 fun String.color(): String {
     return this.replace("&", "§")
 }
@@ -48,13 +45,6 @@ fun Player.error(vararg block: String) {
     }
 }
 
-fun Basic.set(c: Char, buildItem: ItemStack, function: (event: ClickEvent) -> Unit) {
-    set(c, buildItem(buildItem) {
-        colored()
-    })
-    onClick(c, function)
-}
-
 fun CommandSender.error(vararg block: String) {
     block.forEach {
         toError(this, it)
@@ -82,7 +72,7 @@ fun debug(vararg block: String) {
  * 发送信息
  */
 fun toInfo(sender: CommandSender, message: String) {
-    sender.sendMessage("§8[§a 枫溪星球 §8] §7${message.replace("&", "§")}")
+    sender.sendMessage("§8[§a Make §8] §7${message.replace("&", "§")}")
     if (sender is Player && !cooldown.hasNext(sender.name)) {
         sender.playSound(sender.location, Sound.UI_BUTTON_CLICK, 1f, (1..2).random().toFloat())
     }
@@ -92,7 +82,7 @@ fun toInfo(sender: CommandSender, message: String) {
  * 发送信息
  */
 fun toError(sender: CommandSender, message: String) {
-    sender.sendMessage("§8[§4 枫溪星球 §8] §7${message.replace("&", "§")}")
+    sender.sendMessage("§8[§4 Make §8] §7${message.replace("&", "§")}")
     if (sender is Player && !cooldown.hasNext(sender.name)) {
         sender.playSound(sender.location, Sound.ENTITY_VILLAGER_NO, 1f, (1..2).random().toFloat())
     }
@@ -102,7 +92,7 @@ fun toError(sender: CommandSender, message: String) {
  * 发送信息
  */
 fun toDone(sender: CommandSender, message: String) {
-    sender.sendMessage("§8[§6 枫溪星球 §8] §7${message.replace("&", "§")}")
+    sender.sendMessage("§8[§6 Make §8] §7${message.replace("&", "§")}")
     if (sender is Player && !cooldown.hasNext(sender.name)) {
         sender.playSound(sender.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, (1..2).random().toFloat())
     }
@@ -112,7 +102,7 @@ fun toDone(sender: CommandSender, message: String) {
  * 发送信息到后台
  */
 fun toConsole(message: String) {
-    Bukkit.getConsoleSender().sendMessage("§8[§e 枫溪星球 §8] §7${message.replace("&", "§")}")
+    Bukkit.getConsoleSender().sendMessage("§8[§e Make §8] §7${message.replace("&", "§")}")
 }
 
 /**

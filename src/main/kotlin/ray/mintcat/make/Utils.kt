@@ -8,11 +8,8 @@ import taboolib.library.xseries.XItemStack
 import taboolib.library.xseries.XMaterial
 import taboolib.module.kether.KetherShell
 import taboolib.module.kether.printKetherErrorMessage
-import taboolib.module.ui.ClickEvent
-import taboolib.module.ui.type.Basic
 import taboolib.module.ui.type.Linked
 import taboolib.platform.util.buildItem
-import java.lang.StringBuilder
 import java.util.concurrent.CompletableFuture
 
 fun ItemStack.serializable(): MutableMap<String, Any> {
@@ -88,9 +85,4 @@ fun List<String>.check(player: Player): CompletableFuture<Boolean> {
             CompletableFuture.completedFuture(false)
         }
     }
-}
-
-fun Basic.set(int: Int, item: ItemStack, onClick: (ClickEvent) -> Unit) {
-    set(int, item)
-    onClick(int, onClick)
 }
