@@ -6,5 +6,6 @@ import kotlinx.serialization.Serializable
 enum class MakeMaterialType(val display: String) {
     MINECRAFT("原版"),
     MYTHIC("MM"),
-    SXITEM("SX")
+    SXITEM("SX"),
+    ZAPHKIEL("Zap")
 }

@@ -3,9 +3,9 @@ package ray.mintcat.make.ui
 import github.saukiya.sxitem.SXItem
 import ink.ptms.um.Item
 import ink.ptms.um.Mythic
+import ink.ptms.zaphkiel.Zaphkiel
 import org.bukkit.Material
 import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.ItemMeta
 import ray.mintcat.make.*
 import ray.mintcat.make.data.MakeMaterial
@@ -17,13 +17,14 @@ import taboolib.library.xseries.XMaterial
 import taboolib.module.nms.getName
 import taboolib.module.nms.inputSign
 import taboolib.module.ui.openMenu
-import taboolib.module.ui.type.Basic
-import taboolib.module.ui.type.Linked
+import taboolib.module.ui.type.Chest
+import taboolib.module.ui.type.PageableChest
 import taboolib.platform.util.*
 
 object MakeCreateUI {
+
     fun open(player: Player, builder: MakeStack) {
-        player.openMenu<Basic>("创建 ${builder.name}") {
+        player.openMenu<Chest>("创建 ${builder.name}") {
             map(
                 "####A##J#",
                 "#########",
@@ -33,16 +34,16 @@ object MakeCreateUI {
             )
             set('A', builder.getShowItem(player).clone().modifyLore {
                 add("")
-                add("&f是否给予: ${showBoolean(builder.give)}")
-                add("&7左键 替换物品")
-                add("&8Shift+左键 选择源物品")
-                add("&7右键 切换给予")
+                add("&f是否给予: ${showBoolean(builder.give)}".color())
+                add("&7左键 替换物品".color())
+                add("&8Shift+左键 选择源物品".color())
+                add("&7右键 切换给予".color())
             }) {
                 if (clickEvent().isLeftClick && clickEvent().isShiftClick) {
                     player.closeInventory()
                     submit(delay = 2) {
-                        player.openMenu<Basic>("编辑产物") {
-                            map("#A##B##C#")
+                        player.openMenu<Chest>("编辑产物") {
+                            map("#A#B#C#D#")
                             set('#', buildItem(XMaterial.BLACK_STAINED_GLASS_PANE) {
                                 name = " "
                                 colored()
@@ -59,7 +60,7 @@ object MakeCreateUI {
                                 }
                             }
                             set('B', buildItem(XMaterial.SOUL_SAND) {
-                                name = "&f设置来源: &aMythicMobs4"
+                                name = "&f设置来源: &aMythicMobs"
                                 colored()
                             }) {
                                 player.closeInventory()
@@ -76,6 +77,15 @@ object MakeCreateUI {
                                     addSX(player, builder, Type.ITEM)
                                 }
                             }
+                            set('D', buildItem(XMaterial.GLASS) {
+                                name = "&f设置来源: &aZaphkiel"
+                                colored()
+                            }) {
+                                player.closeInventory()
+                                submit(delay = 1) {
+                                    addZap(player, builder, Type.ITEM)
+                                }
+                            }
                         }
                     }
                     return@set
@@ -83,7 +93,7 @@ object MakeCreateUI {
                 if (clickEvent().isLeftClick) {
                     player.closeInventory()
                     submit(delay = 2) {
-                        player.openMenu<Basic>("请放入物品") {
+                        player.openMenu<Chest>("请放入物品") {
                             map("####@####")
                             handLocked(false)
                             set('#', buildItem(XMaterial.BLACK_STAINED_GLASS_PANE) {
@@ -112,10 +122,41 @@ object MakeCreateUI {
             }
 
             set('B', buildItem(XMaterial.NETHER_STAR) {
-                name = "&d继承其他配方(尚未完成)"
+                name = "&d继承其他配方"
                 colored()
             }) {
-                isCancelled = true
+                player.closeInventory()
+                submit(delay = 2) {
+                    player.openMenu<PageableChest<MakeStack>>("继承其他配方") {
+                        rows(6)
+                        inits()
+                        slots(Slots.CENTER)
+                        elements { MakeManager.stacks }
+                        onGenerate { player, element, index, slot ->
+                            element.getShowItem(player).modifyLore {
+                                add("")
+                                add("&f继承这个配方".color())
+                            }
+                        }
+                        onClick { event, element ->
+                            builder.type = element.type
+                            builder.time = element.time
+                            builder.replace.addAll(element.replace)
+                            builder.show = element.show.clone()
+                            builder.give = element.give
+                            builder.action.addAll(element.action)
+                            builder.check.addAll(element.check)
+                            builder.info.addAll(element.info)
+                            builder.source = element.source
+                            player.closeInventory()
+                        }
+                        onClose {
+                            submit(delay = 5) {
+                                open(player, builder)
+                            }
+                        }
+                    }
+                }
             }
             set('C', buildItem(XMaterial.ITEM_FRAME) {
                 name = "&f类型: ${builder.type}"
@@ -152,6 +193,7 @@ object MakeCreateUI {
                 builder.replace.forEach { element ->
                     lore.add("&7${element.type.display} => ${element.id} X ${element.amount}".color())
                 }
+                colored()
             }) {
                 isCancelled = true
                 player.closeInventory()
@@ -244,7 +286,7 @@ object MakeCreateUI {
     val list = HashMap<MakeStack, MutableList<MaterialTask>>()
 
     fun materialType(player: Player, builder: MakeStack) {
-        player.openMenu<Linked<MakeMaterial>>("操作配方") {
+        player.openMenu<PageableChest<MakeMaterial>>("操作配方") {
             inits()
             rows(6)
             slots(Slots.CENTER)
@@ -311,7 +353,7 @@ object MakeCreateUI {
                 addMC(player, builder)
             }
             set(26, buildItem(XMaterial.SOUL_SAND) {
-                name = "&f添加材料: &aMythicMobs4"
+                name = "&f添加材料: &aMythicMobs"
                 colored()
             }) {
                 addMM(player, builder)
@@ -322,6 +364,13 @@ object MakeCreateUI {
             }) {
                 addSX(player, builder)
             }
+            set(44, buildItem(XMaterial.GLASS) {
+                name = "&f添加材料: &aZaphkiel"
+                colored()
+            }) {
+                addZap(player, builder)
+            }
+
         }
     }
 
@@ -331,13 +380,12 @@ object MakeCreateUI {
     }
 
     fun addMC(player: Player, builder: MakeStack, type: Type = Type.REPLACE) {
-        player.openMenu<Linked<Material>>("添加材料: MC") {
+        player.openMenu<PageableChest<Material>>("添加材料: MC") {
             rows(6)
             inits()
             slots(Slots.CENTER)
             elements {
                 val list = mutableListOf<Material>()
-                val test = Material.entries
                 list.addAll(Material.entries.filter { it.isNotAir() && it.canUse() })
                 list.sortBy { it.name }
                 list
@@ -387,12 +435,11 @@ object MakeCreateUI {
                     }
                 }
             }
-
         }
     }
 
     fun addMM(player: Player, builder: MakeStack, type: Type = Type.REPLACE) {
-        player.openMenu<Linked<Item>>("添加材料: MM") {
+        player.openMenu<PageableChest<Item>>("添加材料: MM") {
             rows(6)
             inits()
             slots(Slots.CENTER)
@@ -410,7 +457,7 @@ object MakeCreateUI {
                         }
                     }
                     modifyMeta<ItemMeta> {
-                        displayName = "$displayName &7(${element.internalName})".color()
+                        setDisplayName("$displayName &7(${element.internalName})".color())
                     }
                 }
             }
@@ -448,12 +495,11 @@ object MakeCreateUI {
                     }
                 }
             }
-
         }
     }
 
     fun addSX(player: Player, builder: MakeStack, type: Type = Type.REPLACE) {
-        player.openMenu<Linked<String>>("添加材料: SX") {
+        player.openMenu<PageableChest<String>>("添加材料: SX") {
             rows(6)
             inits()
             slots(Slots.CENTER)
@@ -476,7 +522,7 @@ object MakeCreateUI {
                         }
                     }
                     modifyMeta<ItemMeta> {
-                        displayName = "$displayName &7(${element})".color()
+                        setDisplayName("$displayName &7(${element})".color())
                     }
                 }
             }
@@ -514,7 +560,66 @@ object MakeCreateUI {
                     }
                 }
             }
+        }
+    }
 
+    fun addZap(player: Player, builder: MakeStack, type: Type = Type.REPLACE) {
+        player.openMenu<PageableChest<ink.ptms.zaphkiel.api.Item>>("添加材料: Zap") {
+            rows(6)
+            inits()
+            slots(Slots.CENTER)
+            elements {
+                Zaphkiel.api().getItemManager().getItemMap().values.toList()
+            }
+            onGenerate { player, element, index, slot ->
+                return@onGenerate element.buildItemStack(player).apply {
+                    modifyLore {
+                        add("")
+                        if (type == Type.ITEM) {
+                            add("&f点击设置产物".color())
+                        } else {
+                            add("&f点击添加".color())
+                        }
+                    }
+                    modifyMeta<ItemMeta> {
+                        setDisplayName("$displayName &7(${element})".color())
+                    }
+                }
+            }
+            onClick { event, element ->
+                player.closeInventory()
+                submit(delay = 1) {
+                    player.inputSign(arrayOf("", "", "第一行输入数量")) { len ->
+                        val amount = len[0].toInt()
+                        if (amount == 0) {
+                            player.closeInventory()
+                            submit(delay = 2) {
+                                if (type == Type.REPLACE) {
+                                    materialType(player, builder)
+                                } else {
+                                    open(player, builder)
+                                }
+                            }
+                            return@inputSign
+                        }
+                        val task = MakeMaterial(element.id, MakeMaterialType.ZAPHKIEL, amount)
+                        if (type == Type.REPLACE) {
+                            list.getOrPut(builder) { mutableListOf() }.add(MaterialTask(true, task))
+                            builder.replace.add(task)
+                            player.closeInventory()
+                            submit(delay = 1) {
+                                materialType(player, builder)
+                            }
+                        } else {
+                            builder.source = task
+                            player.closeInventory()
+                            submit(delay = 1) {
+                                open(player, builder)
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -527,19 +632,10 @@ object MakeCreateUI {
 
     fun Material.canUse(): Boolean {
         return try {
-            buildItem(this)
-            true
+            buildItem(this).isNotAir()
         } catch (_: Exception) {
             false
         }
     }
 
-    fun ItemStack.canUse(): Boolean {
-        return try {
-            buildItem(this)
-            true
-        } catch (_: Exception) {
-            false
-        }
-    }
 }

@@ -1,20 +1,15 @@
 package ray.mintcat.make
 
 import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
 import taboolib.common.platform.function.adaptPlayer
 import taboolib.common5.Coerce
-import taboolib.library.xseries.XItemStack
 import taboolib.library.xseries.XMaterial
 import taboolib.module.kether.KetherShell
+import taboolib.module.kether.ScriptOptions
 import taboolib.module.kether.printKetherErrorMessage
-import taboolib.module.ui.type.Linked
+import taboolib.module.ui.type.PageableChest
 import taboolib.platform.util.buildItem
 import java.util.concurrent.CompletableFuture
-
-fun ItemStack.serializable(): MutableMap<String, Any> {
-    return XItemStack.serialize(this)
-}
 
 class LoadTask(string: String)
 
@@ -31,8 +26,8 @@ fun createLoad(max: Double, now: Double, maxS: String, nowS: String): String {
     return string.reversed().toString()
 }
 
-fun <T> Linked<T>.inits() {
-    this.setNextPage(51) { page, hasNextPage ->
+fun <T> PageableChest<T>.inits() {
+    this.setNextPage(51) { _, hasNextPage ->
         if (hasNextPage) {
             buildItem(XMaterial.SPECTRAL_ARROW) {
                 name = "§f下一页"
@@ -43,7 +38,7 @@ fun <T> Linked<T>.inits() {
             }
         }
     }
-    this.setPreviousPage(47) { page, hasPreviousPage ->
+    this.setPreviousPage(47) { _, hasPreviousPage ->
         if (hasPreviousPage) {
             buildItem(XMaterial.SPECTRAL_ARROW) {
                 name = "§f上一页"
@@ -58,7 +53,7 @@ fun <T> Linked<T>.inits() {
 
 fun List<String>.eval(player: Player) {
     try {
-        KetherShell.eval(this, sender = adaptPlayer(player))
+        KetherShell.eval(this, ScriptOptions(sender = adaptPlayer(player)))
     } catch (e: Throwable) {
         e.printKetherErrorMessage()
     }
@@ -77,7 +72,7 @@ fun List<String>.check(player: Player): CompletableFuture<Boolean> {
         CompletableFuture.completedFuture(true)
     } else {
         try {
-            KetherShell.eval(this, sender = adaptPlayer(player)).thenApply {
+            KetherShell.eval(this, ScriptOptions(sender = adaptPlayer(player))).thenApply {
                 Coerce.toBoolean(it)
             }
         } catch (e: Throwable) {

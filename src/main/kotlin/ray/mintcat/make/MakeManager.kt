@@ -25,7 +25,7 @@ object MakeManager {
         coerceInputValues = true
     }
 
-    @Schedule(period = 20)
+    @Schedule(async = true, period = 20)
     fun update() {
         playerData.forEach {
             it.refresh()

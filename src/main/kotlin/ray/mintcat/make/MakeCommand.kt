@@ -9,7 +9,7 @@ import taboolib.common.platform.command.mainCommand
 import taboolib.common.platform.command.subCommand
 import taboolib.expansion.createHelper
 
-@CommandHeader(name = "make", aliases = ["mk"])
+@CommandHeader(name = "make", aliases = ["mk"], permission = "make.command.use")
 object MakeCommand {
 
     @CommandBody
@@ -17,14 +17,14 @@ object MakeCommand {
         createHelper()
     }
 
-    @CommandBody
+    @CommandBody(optional = true)
     val open = subCommand {
         execute<Player> { sender, context, argument ->
             MakeQueueUI.open(sender)
         }
     }
 
-    @CommandBody
+    @CommandBody(optional = true)
     val create = subCommand {
         dynamic("配方名") {
             execute<Player> { sender, _, argument ->

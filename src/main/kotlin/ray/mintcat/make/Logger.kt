@@ -4,11 +4,7 @@ import org.bukkit.Bukkit
 import org.bukkit.Sound
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
 import taboolib.common5.Baffle
-import taboolib.module.ui.ClickEvent
-import taboolib.module.ui.type.Basic
-import taboolib.platform.util.buildItem
 
 /**
  * LoggerUtils
@@ -82,7 +78,7 @@ fun toInfo(sender: CommandSender, message: String) {
  * 发送信息
  */
 fun toError(sender: CommandSender, message: String) {
-    sender.sendMessage("§8[§4 Make §8] §7${message.replace("&", "§")}")
+    sender.sendMessage("§8[§c Make §8] §7${message.replace("&", "§")}")
     if (sender is Player && !cooldown.hasNext(sender.name)) {
         sender.playSound(sender.location, Sound.ENTITY_VILLAGER_NO, 1f, (1..2).random().toFloat())
     }

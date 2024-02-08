@@ -1,25 +1,27 @@
+import io.izzel.taboolib.gradle.*
+
 plugins {
     `java-library`
-    `maven-publish`
-    id("io.izzel.taboolib") version "1.56"
-    kotlin("jvm") version "1.9.0"
-    kotlin("plugin.serialization") version "1.9.0"
+    id("io.izzel.taboolib") version "2.0.4"
+    kotlin("jvm") version "1.9.22"
+    kotlin("plugin.serialization") version "1.9.22"
 }
 
 taboolib {
-    install("common")
-    install("common-5")
-    install("module-chat")
-    install("module-configuration")
-    install("module-kether")
-    install("module-nms")
-    install("module-nms-util")
-    install("module-ui")
-    install("expansion-command-helper")
-    install("platform-bukkit")
+    description {
+        dependencies {
+            name("MythicMobs").optional(true)
+            name("SX-Item").optional(true)
+            name("Zaphkiel").optional(true)
+        }
+    }
+    env {
+        install(CHAT, CONFIGURATION, KETHER, NMS_UTIL, UI, EXPANSION_COMMAND_HELPER, BUKKIT_ALL)
+    }
+    version {
+        taboolib = "6.1.0"
+    }
     relocate("ink.ptms.um","ray.mintcat.make.um")
-    classifier = null
-    version = "6.0.12-9"
 }
 
 repositories {
@@ -30,9 +32,10 @@ repositories {
 }
 
 dependencies {
-    compileOnly("ink.ptms.core:v11200:11200")
-    taboo("ink.ptms:um:1.0.0-beta-30")
-    compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+    compileOnly("ink.ptms.core:v12004:12004:universal")
+    taboo("ink.ptms:um:1.0.1")
+    compileOnly("ink.ptms:Zaphkiel:2.0.14")
+    compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
     compileOnly(kotlin("stdlib"))
     compileOnly(fileTree("libs"))
 }

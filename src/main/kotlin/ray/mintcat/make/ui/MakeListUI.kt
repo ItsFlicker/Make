@@ -12,14 +12,16 @@ import taboolib.common.platform.function.submit
 import taboolib.library.xseries.XMaterial
 import taboolib.module.nms.inputSign
 import taboolib.module.ui.openMenu
-import taboolib.module.ui.type.Linked
-import taboolib.platform.util.*
+import taboolib.module.ui.type.PageableChest
+import taboolib.platform.util.Slots
+import taboolib.platform.util.buildItem
+import taboolib.platform.util.modifyLore
+import taboolib.platform.util.modifyMeta
 
 object MakeListUI {
 
-
     fun typeUI(player: Player) {
-        player.openMenu<Linked<String>>("制作") {
+        player.openMenu<PageableChest<String>>("制作") {
             rows(6)
             inits()
             slots(Slots.CENTER)
@@ -65,7 +67,7 @@ object MakeListUI {
     }
 
     fun open(player: Player, type: String) {
-        player.openMenu<Linked<MakeStack>>("${type}类 制作") {
+        player.openMenu<PageableChest<MakeStack>>("${type}类 制作") {
             rows(6)
             inits()
             slots(Slots.CENTER)
@@ -110,7 +112,7 @@ object MakeListUI {
                     }
                     if (element.builder) {
                         modifyMeta<ItemMeta> {
-                            displayName = "$displayName &e(编辑中)".color()
+                            setDisplayName("$displayName &e(编辑中)".color())
                         }
                     }
                     if (player.isOp) {

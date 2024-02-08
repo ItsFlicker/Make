@@ -41,7 +41,7 @@ class MakeStack(
 
     // true 可
     fun canMake(player: Player): Boolean {
-        return !replace.map { it.hasItem(player) ?: false }.contains(false) && check.check(player).get() == true
+        return replace.all { it.hasItem(player) } && check.check(player).get() == true
     }
 
     fun make(player: Player) {

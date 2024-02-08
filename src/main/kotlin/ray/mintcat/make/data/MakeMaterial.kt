@@ -2,6 +2,8 @@ package ray.mintcat.make.data
 
 import github.saukiya.sxitem.data.item.ItemManager
 import ink.ptms.um.Mythic
+import ink.ptms.zaphkiel.Zaphkiel
+import ink.ptms.zaphkiel.impl.item.toExtensionStreamOrNull
 import kotlinx.serialization.Serializable
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -23,17 +25,18 @@ class MakeMaterial(
             MINECRAFT -> {
                 buildItem(id.parseToXMaterial())
             }
-
             MYTHIC -> {
                 Mythic.API.getItemStack(id) ?: ItemStack(Material.BARRIER)
             }
-
             SXITEM -> {
                 if (excess.isEmpty()) {
                     ItemManager().getItem(id, player, *excess.toTypedArray()) ?: ItemStack(Material.BARRIER)
                 } else {
                     ItemManager().getItem(id, player) ?: ItemStack(Material.BARRIER)
                 }
+            }
+            ZAPHKIEL -> {
+                Zaphkiel.api().getItemManager().generateItemStack(id, player) ?: ItemStack(Material.BARRIER)
             }
         }
         player.giveItem(item, amount)
@@ -44,17 +47,18 @@ class MakeMaterial(
             MINECRAFT -> {
                 buildItem(id.parseToXMaterial())
             }
-
             MYTHIC -> {
                 Mythic.API.getItemStack(id) ?: ItemStack(Material.BARRIER)
             }
-
             SXITEM -> {
                 if (excess.isEmpty()) {
                     ItemManager().getItem(id, player, *excess.toTypedArray()) ?: ItemStack(Material.BARRIER)
                 } else {
                     ItemManager().getItem(id, player) ?: ItemStack(Material.BARRIER)
                 }
+            }
+            ZAPHKIEL -> {
+                Zaphkiel.api().getItemManager().generateItemStack(id, player) ?: ItemStack(Material.BARRIER)
             }
         }
         return item.clone().apply {
@@ -80,11 +84,9 @@ class MakeMaterial(
                 MINECRAFT -> {
                     it.type.name.equals(id, true)
                 }
-
                 MYTHIC -> {
                     (Mythic.API.getItemId(it) ?: "null") == id
                 }
-
                 SXITEM -> {
                     val manager = ItemManager().getGenerator(it)
                     if (manager != null) {
@@ -92,6 +94,9 @@ class MakeMaterial(
                     } else {
                         false
                     }
+                }
+                ZAPHKIEL -> {
+                    it.toExtensionStreamOrNull()?.getZaphkielId() == id
                 }
             }
         }
@@ -103,11 +108,9 @@ class MakeMaterial(
                 MINECRAFT -> {
                     it.type.name.equals(id, true)
                 }
-
                 MYTHIC -> {
                     (Mythic.API.getItemId(it) ?: "null") == id
                 }
-
                 SXITEM -> {
                     val manager = ItemManager().getGenerator(it)
                     if (manager != null) {
@@ -115,6 +118,9 @@ class MakeMaterial(
                     } else {
                         false
                     }
+                }
+                ZAPHKIEL -> {
+                    it.toExtensionStreamOrNull()?.getZaphkielId() == id
                 }
             }
         }
@@ -126,11 +132,9 @@ class MakeMaterial(
                 MINECRAFT -> {
                     it.type.name.equals(id, true)
                 }
-
                 MYTHIC -> {
                     (Mythic.API.getItemId(it) ?: "null") == id
                 }
-
                 SXITEM -> {
                     val manager = ItemManager().getGenerator(it)
                     if (manager != null) {
@@ -138,6 +142,9 @@ class MakeMaterial(
                     } else {
                         false
                     }
+                }
+                ZAPHKIEL -> {
+                    it.toExtensionStreamOrNull()?.getZaphkielId() == id
                 }
             }
 

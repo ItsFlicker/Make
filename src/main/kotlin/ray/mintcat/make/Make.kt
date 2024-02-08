@@ -6,12 +6,12 @@ import taboolib.common.platform.Plugin
 
 @RuntimeDependencies(
     RuntimeDependency(
-        value = "org.jetbrains.kotlinx:kotlinx-serialization-core:1.3.2",
-        relocate = ["!kotlin.", "!kotlin@kotlin_version_escape@."]
+        value = "org.jetbrains.kotlinx:kotlinx-serialization-core:1.6.2",
+        relocate = ["!kotlin.", "!kotlin1922."]
     ),
     RuntimeDependency(
-        value = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2",
-        relocate = ["!kotlin.", "!kotlin@kotlin_version_escape@."]
+        value = "org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2",
+        relocate = ["!kotlin.", "!kotlin1922."]
     )
 )
 object Make : Plugin()

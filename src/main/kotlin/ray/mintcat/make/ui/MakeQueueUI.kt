@@ -7,7 +7,7 @@ import ray.mintcat.make.data.Time
 import taboolib.common.platform.function.submit
 import taboolib.library.xseries.XMaterial
 import taboolib.module.ui.openMenu
-import taboolib.module.ui.type.Basic
+import taboolib.module.ui.type.Chest
 import taboolib.platform.util.buildItem
 
 object MakeQueueUI {
@@ -15,7 +15,7 @@ object MakeQueueUI {
     fun open(player: Player) {
         val data = MakeManager.getData(player)
         data.refresh()
-        player.openMenu<Basic>("制作队列 [${data.getTaskSize()}/${data.task}]") {
+        player.openMenu<Chest>("制作队列 [${data.getTaskSize()}/${data.task}]") {
             map(
                 "#########",
                 "#0123456#",

@@ -1,6 +1,7 @@
 package ray.mintcat.make.ui
 
 import org.bukkit.entity.Player
+import ray.mintcat.make.color
 import ray.mintcat.make.data.MakeStack
 import ray.mintcat.make.data.Time
 import ray.mintcat.make.error
@@ -8,7 +9,7 @@ import ray.mintcat.make.showBoolean
 import taboolib.common.platform.function.submit
 import taboolib.library.xseries.XMaterial
 import taboolib.module.ui.openMenu
-import taboolib.module.ui.type.Basic
+import taboolib.module.ui.type.Chest
 import taboolib.platform.util.buildItem
 import taboolib.platform.util.modifyLore
 
@@ -18,7 +19,7 @@ object MakeUI {
         listOf('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T')
 
     fun open(player: Player, makeStack: MakeStack) {
-        player.openMenu<Basic>("${makeStack.name}制作") {
+        player.openMenu<Chest>("${makeStack.name}制作") {
             map(
                 "#########",
                 "###ABCDE#",
@@ -73,7 +74,7 @@ object MakeUI {
                     set(it, data.showItem(player).clone().apply {
                         modifyLore {
                             add("")
-                            add("&f需求数量: &c${data.getAmount(player)}&8/&a${data.amount} ${data.showBoolean(player)}")
+                            add("&f需求数量: &c${data.getAmount(player)}&8/&a${data.amount} ${data.showBoolean(player)}".color())
                         }
                     }) {
                         isCancelled = true
